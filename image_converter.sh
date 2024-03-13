@@ -13,7 +13,7 @@ display_elapsed_time() {
 # Function to count images in different formats
 count_images() {
     echo "Analyzing images in $1 directory..."
-    find "$1" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.svg" -o -iname "*.ico" \) -exec sh -c 'echo ${0##*.}' {} \; | sort | uniq -c
+    find "$1" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.svg" -o -iname "*.ico" \) -exec sh -c 'echo ${0##*.}' {} \; | sort | uniq -c
 }
 
 # Prompt user for the directory path
@@ -36,7 +36,7 @@ temp_dir=$(mktemp -d)
 image_array=()
 while IFS= read -r -d $'\0' image; do
     image_array+=("$(basename "$image")")
-done < <(find "$directory_path" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.svg" -o -iname "*.ico" \) -print0)
+done < <(find "$directory_path" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.svg" -o -iname "*.ico" \) -print0)
 
 read -n 1 -s -r -p "Press any key to continue..."
 
