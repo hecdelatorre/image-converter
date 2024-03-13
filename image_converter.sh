@@ -29,6 +29,9 @@ fi
 # Count images in different formats
 count_images "$directory_path"
 
+# Create temporary directory
+temp_dir=$(mktemp -d)
+
 # Save original image names with extensions to an array
 image_array=()
 while IFS= read -r -d $'\0' image; do
@@ -46,16 +49,16 @@ for image in "${image_array[@]}"; do
     original_name="${image%.*}"
     case "$target_format" in
         "JPG"|"JPEG")
-            convert "$directory_path/$image" "$directory_path/$original_name.jpg" &
+            convert "$directory_path/$image" "$temp_dir/$original_name.jpg" &
             ;;
         "PNG")
-            convert "$directory_path/$image" "$directory_path/$original_name.png" &
+            convert "$directory_path/$image" "$temp_dir/$original_name.png" &
             ;;
         "SVG")
-            convert "$directory_path/$image" "$directory_path/$original_name.svg" &
+            convert "$directory_path/$image" "$temp_dir/$original_name.svg" &
             ;;
         "ICO")
-            convert "$directory_path/$image" "$directory_path/$original_name.ico" &
+            convert "$directory_path/$image" "$temp_dir/$original_name.ico" &
             ;;
         *)
             echo "Invalid target format. Aborting."
@@ -74,5 +77,12 @@ echo -e "\nDeleting original images..."
 for image in "${image_array[@]}"; do
     rm -f "$directory_path/$image" 
 done
+
+# Move converted images from temporary directory to original directory
+echo "Moving converted images to original directory..."
+mv "$temp_dir"/* "$directory_path"/
+
+# Remove temporary directory
+rm -rf "$temp_dir"
 
 echo "Conversion completed successfully."
