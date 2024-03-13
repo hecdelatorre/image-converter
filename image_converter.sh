@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# Function to display elapsed time while downloads are in progress
-display_elapsed_time() {
-  local elapsed=0
-  while [ "$(jobs -r | wc -l)" -gt 0 ]; do
-    sleep 1
-    elapsed=$((elapsed + 1))
-    printf "\rElapsed time: %02d:%02d:%02d" $((elapsed/3600)) $((elapsed%3600/60)) $((elapsed%60))
-  done
-}
-
 # Function to count images in different formats
 count_images() {
     echo "Analyzing images in $1 directory..."
@@ -65,10 +55,8 @@ for image in "${image_array[@]}"; do
             exit 1
             ;;
     esac
+    sleep 0.5
 done
-
-# Display elapsed time
-display_elapsed_time
 
 wait
 
